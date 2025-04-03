@@ -1,11 +1,12 @@
-import { defineConfig } from 'vite';
-import laravel from 'laravel-vite-plugin';
-import vue from '@vitejs/plugin-vue';
+import { defineConfig } from "vite";
+import laravel from "laravel-vite-plugin";
+import vue from "@vitejs/plugin-vue";
+import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 export default defineConfig({
     plugins: [
         laravel({
-            input: ['resources/js/app.js'],
+            input: ["resources/js/app.js"],
             refresh: true,
         }),
         vue({
@@ -16,10 +17,29 @@ export default defineConfig({
                 },
             },
         }),
+        // Add the node polyfills plugin
+        nodePolyfills({
+            globals: {
+                Buffer: true,
+                global: true,
+                process: true,
+            },
+        }),
     ],
     resolve: {
         alias: {
-            vue: 'vue/dist/vue.esm-bundler.js',
+            vue: "vue/dist/vue.esm-bundler.js",
+            crypto: "crypto-browserify",
+            stream: "stream-browserify",
+            assert: "assert",
+        },
+    },
+    define: {
+        "process.env": {},
+    },
+    build: {
+        commonjsOptions: {
+            transformMixedEsModules: true,
         },
     },
 });
